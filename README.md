@@ -4,7 +4,7 @@ A high-performance, responsive full-stack **Job Application Tracker** designed t
 
 This repository is optimized for quick hosting and features a zero-setup local sandbox environment as well as a full MERN backend!
 
-### 🔗 [Live Demo](https://snehasanu64.github.io/job_tracker/index.html)
+### 🔗 [Live Demo](https://snehasanu64.github.io/Job_Application_Tracker/)
 
 ---
 
