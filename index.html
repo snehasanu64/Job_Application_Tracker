@@ -4,15 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>📋 Job Application Tracker — Live Demo</title>
-    
+
     <!-- Google Fonts as styled in index.css -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Syne:wght@400..800&display=swap" rel="stylesheet">
-    
+
     <!-- Core App CSS -->
     <link rel="stylesheet" href="index.css" />
-    
+
     <!-- Additional custom styling for the sandbox experience -->
     <style>
       /* Toast notification */
@@ -37,7 +37,7 @@
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         pointer-events: none;
       }
-      
+
       .toast.show {
         opacity: 1;
         transform: translateY(0);
@@ -49,17 +49,16 @@
     <!-- Root element for React -->
     <div id="root"></div>
 
-    <!-- React and Babel from CDNs -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Axios for MERN Stack Mode integration -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- React and ReactDOM from CDN (no Babel needed - plain JS only) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 
-    <!-- React Application Logic -->
-    <script type="text/babel" data-presets="react">
-      const { useState, useEffect } = React;
+    <!-- Axios for MERN Stack Mode integration -->
+    <script src="https://unpkg.com/axios@1.7.2/dist/axios.min.js"></script>
+
+    <!-- React Application Logic (plain JS, no JSX, no Babel required) -->
+    <script>
+      const { useState, useEffect, createElement: h } = React;
 
       // Status colors used for badges and sidebars
       const STATUS_COLORS = {
@@ -133,17 +132,17 @@
           { label: "Rejected", value: counts.Rejected, color: "#ef4444" },
         ];
 
-        return (
-          <div className="stats-bar">
-            {stats.map((stat) => (
-              <div key={stat.label} className="stat-item">
-                <span className="stat-value" style={{ color: stat.color }}>
-                  {stat.value}
-                </span>
-                <span className="stat-label">{stat.label}</span>
-              </div>
-            ))}
-          </div>
+        return h(
+          "div",
+          { className: "stats-bar" },
+          stats.map((stat) =>
+            h(
+              "div",
+              { key: stat.label, className: "stat-item" },
+              h("span", { className: "stat-value", style: { color: stat.color } }, stat.value),
+              h("span", { className: "stat-label" }, stat.label)
+            )
+          )
         );
       };
 
@@ -185,63 +184,71 @@
           }
         };
 
-        return (
-          <div className="form-card">
-            <h2 className="form-title">Add Application</h2>
-
-            {error && <p className="error-msg">{error}</p>}
-
-            <form onSubmit={handleSubmit} className="job-form">
-              <div className="form-group">
-                <label>Company Name</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  placeholder="e.g. Google"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Role / Position</label>
-                <input
-                  type="text"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  placeholder="e.g. Frontend Developer"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Date Applied</label>
-                <input
-                  type="date"
-                  name="dateApplied"
-                  value={formData.dateApplied}
-                  onChange={handleChange} // ✅ Fixed! Missing handler added
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Status</label>
-                <select name="status" value={formData.status} onChange={handleChange}>
-                  <option>Applied</option>
-                  <option>Interview</option>
-                  <option>Rejected</option>
-                  <option>Offer</option>
-                </select>
-              </div>
-
-              <button type="submit" className="btn-add" disabled={loading}>
-                {loading ? "Adding..." : "+ Add Job"}
-              </button>
-            </form>
-          </div>
+        return h(
+          "div",
+          { className: "form-card" },
+          h("h2", { className: "form-title" }, "Add Application"),
+          error ? h("p", { className: "error-msg" }, error) : null,
+          h(
+            "form",
+            { onSubmit: handleSubmit, className: "job-form" },
+            h(
+              "div",
+              { className: "form-group" },
+              h("label", null, "Company Name"),
+              h("input", {
+                type: "text",
+                name: "company",
+                value: formData.company,
+                onChange: handleChange,
+                placeholder: "e.g. Google",
+                required: true,
+              })
+            ),
+            h(
+              "div",
+              { className: "form-group" },
+              h("label", null, "Role / Position"),
+              h("input", {
+                type: "text",
+                name: "role",
+                value: formData.role,
+                onChange: handleChange,
+                placeholder: "e.g. Frontend Developer",
+                required: true,
+              })
+            ),
+            h(
+              "div",
+              { className: "form-group" },
+              h("label", null, "Date Applied"),
+              h("input", {
+                type: "date",
+                name: "dateApplied",
+                value: formData.dateApplied,
+                onChange: handleChange,
+                required: true,
+              })
+            ),
+            h(
+              "div",
+              { className: "form-group" },
+              h("label", null, "Status"),
+              h(
+                "select",
+                { name: "status", value: formData.status, onChange: handleChange },
+                h("option", null, "Applied"),
+                h("option", null, "Interview"),
+                h("option", null, "Rejected"),
+                h("option", null, "Offer")
+              )
+            ),
+            h(
+              "button",
+              { type: "submit", className: "btn-add", disabled: loading },
+              loading ? "Adding..." : "+ Add Job"
+            )
+          )
         );
       };
 
@@ -264,59 +271,70 @@
           setUpdating(false);
         };
 
-        return (
-          <div className="job-card">
-            <div
-              className="status-bar"
-              style={{ backgroundColor: STATUS_COLORS[job.status] }}
-            />
-
-            <div className="card-body">
-              <div className="card-header">
-                <div>
-                  <h3 className="company-name">{job.company}</h3>
-                  <p className="role-name">{job.role}</p>
-                </div>
-
-                <span
-                  className="status-badge"
-                  style={{
+        return h(
+          "div",
+          { className: "job-card" },
+          h("div", {
+            className: "status-bar",
+            style: { backgroundColor: STATUS_COLORS[job.status] },
+          }),
+          h(
+            "div",
+            { className: "card-body" },
+            h(
+              "div",
+              { className: "card-header" },
+              h(
+                "div",
+                null,
+                h("h3", { className: "company-name" }, job.company),
+                h("p", { className: "role-name" }, job.role)
+              ),
+              h(
+                "span",
+                {
+                  className: "status-badge",
+                  style: {
                     backgroundColor: STATUS_COLORS[job.status] + "22",
                     color: STATUS_COLORS[job.status],
                     border: `1px solid ${STATUS_COLORS[job.status]}44`,
-                  }}
-                >
-                  {job.status}
-                </span>
-              </div>
-
-              <div className="card-footer">
-                <span className="date-applied">📅 {formatDate(job.dateApplied)}</span>
-
-                <div className="card-actions">
-                  <select
-                    value={job.status}
-                    onChange={handleStatusChange}
-                    disabled={updating}
-                    className="status-select"
-                  >
-                    <option>Applied</option>
-                    <option>Interview</option>
-                    <option>Rejected</option>
-                    <option>Offer</option>
-                  </select>
-
-                  <button
-                    onClick={() => onDelete(job._id)}
-                    className="btn-delete"
-                    title="Delete this job"
-                  >
-                    🗑
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+                  },
+                },
+                job.status
+              )
+            ),
+            h(
+              "div",
+              { className: "card-footer" },
+              h("span", { className: "date-applied" }, `📅 ${formatDate(job.dateApplied)}`),
+              h(
+                "div",
+                { className: "card-actions" },
+                h(
+                  "select",
+                  {
+                    value: job.status,
+                    onChange: handleStatusChange,
+                    disabled: updating,
+                    className: "status-select",
+                  },
+                  h("option", null, "Applied"),
+                  h("option", null, "Interview"),
+                  h("option", null, "Rejected"),
+                  h("option", null, "Offer")
+                ),
+                h(
+                  "button",
+                  {
+                    onClick: () => onDelete(job._id),
+                    className: "btn-delete",
+                    title: "Delete this job",
+                  },
+                  "🗑"
+                )
+              )
+            )
+          )
         );
       };
 
@@ -424,88 +442,92 @@
           }
         };
 
-        const toggleMode = (newMode) => {
-          setMode(newMode);
-        };
-
         // Filter jobs
         const filteredJobs =
           filterStatus === "All"
             ? jobs
             : jobs.filter((job) => job.status === filterStatus);
 
-        return (
-          <div className="app">
-            {/* ── Header ── */}
-            <header className="app-header">
-              <div className="header-inner">
-                <div>
-                  <h1 className="app-title">Job Application Tracker</h1>
-                </div>
-              </div>
-            </header>
-
-            <main className="app-main">
-              {/* ── Stats Summary ── */}
-              <StatsBar jobs={jobs} />
-
-              <div className="layout">
-                {/* ── Left: Add Job Form ── */}
-                <aside className="sidebar">
-                  <JobForm onJobAdded={handleAddJob} />
-                </aside>
-
-                {/* ── Right: Job List ── */}
-                <section className="job-list-section">
-                  {/* Filter Tabs */}
-                  <div className="filter-tabs">
-                    {["All", "Applied", "Interview", "Offer", "Rejected"].map((status) => (
-                      <button
-                        key={status}
-                        className={`filter-tab ${filterStatus === status ? "active" : ""}`}
-                        onClick={() => setFilterStatus(status)}
-                      >
-                        {status}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Job Cards */}
-                  {loading ? (
-                    <p className="loading-text">Loading applications...</p>
-                  ) : filteredJobs.length === 0 ? (
-                    <div className="empty-state">
-                      <p>No applications found.</p>
-                      <small>Add your first job using the form on the left!</small>
-                    </div>
-                  ) : (
-                    <div className="job-list">
-                      {filteredJobs.map((job) => (
-                        <JobCard
-                          key={job._id}
-                          job={job}
-                          onStatusChange={handleStatusChange}
-                          onDelete={handleDelete}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </section>
-              </div>
-            </main>
-
-            {/* Toast notification component */}
-            <div className={`toast ${toast.show ? 'show' : ''}`}>
-              <span>ℹ️</span> {toast.message}
-            </div>
-          </div>
+        return h(
+          "div",
+          { className: "app" },
+          h(
+            "header",
+            { className: "app-header" },
+            h(
+              "div",
+              { className: "header-inner" },
+              h("div", null, h("h1", { className: "app-title" }, "Job Application Tracker"))
+            )
+          ),
+          h(
+            "main",
+            { className: "app-main" },
+            h(StatsBar, { jobs }),
+            h(
+              "div",
+              { className: "layout" },
+              h(
+                "aside",
+                { className: "sidebar" },
+                h(JobForm, { onJobAdded: handleAddJob })
+              ),
+              h(
+                "section",
+                { className: "job-list-section" },
+                h(
+                  "div",
+                  { className: "filter-tabs" },
+                  ["All", "Applied", "Interview", "Offer", "Rejected"].map((status) =>
+                    h(
+                      "button",
+                      {
+                        key: status,
+                        className: `filter-tab ${filterStatus === status ? "active" : ""}`,
+                        onClick: () => setFilterStatus(status),
+                      },
+                      status
+                    )
+                  )
+                ),
+                loading
+                  ? h("p", { className: "loading-text" }, "Loading applications...")
+                  : filteredJobs.length === 0
+                  ? h(
+                      "div",
+                      { className: "empty-state" },
+                      h("p", null, "No applications found."),
+                      h("small", null, "Add your first job using the form on the left!")
+                    )
+                  : h(
+                      "div",
+                      { className: "job-list" },
+                      filteredJobs.map((job) =>
+                        h(JobCard, {
+                          key: job._id,
+                          job,
+                          onStatusChange: handleStatusChange,
+                          onDelete: handleDelete,
+                        })
+                      )
+                    )
+              )
+            )
+          ),
+          h(
+            "div",
+            { className: `toast ${toast.show ? 'show' : ''}` },
+            h("span", null, "ℹ️"),
+            " ",
+            toast.message
+          )
         );
       };
 
       // Mount the React Application
       const container = document.getElementById("root");
       const root = ReactDOM.createRoot(container);
-      root.render(<App />);
+      root.render(h(App));
     </script>
   </body>
 </html>
